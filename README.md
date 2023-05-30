@@ -16,10 +16,11 @@ MyStuff:
         repo: MyCoolRepo
         query: "is:issue"
         fields: title,html_url
-        file: "allmystuff.csv"
+        file: "allmystuff.csv"  # optional
 ```
 
 then, run this command:
 ```bash
 node . -s MyStuff:all
 ```
+If you forget any required parameters, the app will ask you for them.
