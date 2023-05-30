@@ -1,0 +1,23 @@
+group:
+  searchName:
+    owner: RepoOwner
+    repo: RepoName
+    query: "github issue search query"
+    fields: field1,field2
+    file: "optional filename to export results"
+
+# Example.
+MyStuff:
+  all:
+    owner: MyName
+    repo: MyCoolRepo
+    query: "is:issue"
+    fields: title,html_url
+    file: "allmystuff.csv"
+
+  active:
+    owner: MyName
+    repo: MyCoolRepo
+    query: "is:issue is:open"
+    fields: title,html_url
+    file: "myactivestuff.csv"
