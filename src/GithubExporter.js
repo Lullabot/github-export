@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
 const fs = require('fs');
+const path = require('path');
 const GitHub = require("github-api");
 const inquirer = require('inquirer');
 const YAML = require("yaml");
@@ -209,12 +210,16 @@ class Exporter {
      * @param filename
      */
     exportResults(content, filename) {
-
+        // Resolve full filename.
+        let absolutePath = path.resolve(`./exports/${filename}`);
 
         // Write the csv.
-        fs.writeFile(`./exports/${filename}`, content.join('\n'), {flag: 'a+'}, err => {
+        fs.writeFile(absolutePath, content.join('\n'), {flag: 'a+'}, err => {
             if (err) {
                 throw new Error(err);
+            }
+            else {
+                console.log(`\n💾 File saved to ${absolutePath}`)
             }
         });
     };
