@@ -30,5 +30,10 @@ module.exports = {
         flag: 's',
         type: 'group:name',
         required: false
+    },
+    debug: {
+        label: 'Enable Debug Mode',
+        flag: 'd',
+        required: false,
     }
 }

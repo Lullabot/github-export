@@ -21,11 +21,13 @@ async function main(config, options, exporter) {
     if (search_param) {
         if (exporter.searchFileExists()) {
             const grouping = search_param.split(':');
-            search_options = await exporter.getSavedOptions(grouping[0], grouping[1]);
+            search_options = await exporter.getSavedOptions(grouping[0], grouping[1]).catch(err => {
+                die(err, exporter.debug());
+            });
         }
         else {
-            console.error(`Can't find 'search.yml' to load saved search '${search_param}'.`);
-            process.exit(1);
+            let err = new Error(`Can't find 'search.yml' to load saved search '${search_param}'.`);
+            die(err, exporter.debug());
         }
 
     // If there were no query or search options set, ask the user what they want to do.
@@ -53,9 +55,28 @@ async function main(config, options, exporter) {
         // Save a file if requested.
         let export_file = exporter.getExportFile();
         if (export_file) {
-            exporter.exportResults(results, export_file);
+            exporter.exportResults(results, export_file).catch(err => {
+                die(err, exporter.debug());
+            });
         }
+    }).catch(err => {
+        die(err, exporter.debug());
     });
+}
+
+/**
+ * End process execution and log the error.
+ * @param error
+ * @param debug
+ */
+function die(error, debug) {
+    console.error(`😵 ${error.message}`);
+
+    if (debug) {
+        console.log(error);
+    }
+
+    process.exit(1);
 }
 
 /**

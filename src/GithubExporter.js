@@ -39,7 +39,8 @@ class Exporter {
 
             // Define the CLI options.
             let opt = options[i];
-            program.option(`-${opt.flag}, --${i} <${opt.type}>`, opt.label);
+            let opt_type = opt?.type ? ` <${opt.type}>` : '';
+            program.option(`-${opt.flag}, --${i}${opt_type}`, opt.label);
         }
 
         // Load the CLI options into the program.
@@ -89,7 +90,7 @@ class Exporter {
     async getSavedOptions(group, name) {
         const saved_searches = await this.getSavedSearches();
         if (!saved_searches[group] || !saved_searches[group][name]) {
-            throw new Error('Invalid saved search reference.');
+            throw new Error(`Invalid saved search reference. Can't find '${group}:${name}' in 'search.yml'.`);
         } else {
             return saved_searches[group][name];
         }
@@ -217,12 +218,12 @@ class Exporter {
      * @param content
      * @param filename
      */
-    exportResults(content, filename) {
+    async exportResults(content, filename) {
         // Resolve full filename.
         let absolutePath = path.resolve(`./exports/${filename}`);
 
         // Write the csv.
-        fs.writeFile(absolutePath, content.join('\n'), {flag: 'w'}, err => {
+        return await fs.writeFile(absolutePath, content.join('\n'), {flag: 'w'}, err => {
             if (err) {
                 throw new Error(err);
             } else {
@@ -298,6 +299,14 @@ class Exporter {
         }
 
         return string;
+    }
+
+    /**
+     * Is debug mode enabled.
+     * @returns {boolean}
+     */
+    debug() {
+        return this.cliOptions.debug === true;
     }
 }
 
