@@ -280,8 +280,14 @@ class Exporter {
         // Remove line breaks.
         string.replace(/\n/g, '');
 
-        // Escape commas.
-        string = string.replace(/,/g, '\,');
+        // Check if the input string contains special characters that need to be escaped
+        if (/[",\n\r]/g.test(string)) {
+            // Escape double quotes by replacing them with two double quotes
+            string = string.replace(/"/g, '""');
+
+            // Enclose the string in double quotes
+            string = '"' + string + '"';
+        }
 
         return string;
     }
