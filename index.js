@@ -15,18 +15,25 @@ async function main(config, options, exporter) {
     const cli_options = exporter.getCliOptions();
     let search_options = {};
     let query_options = {};
+    const search_param = exporter.getSearchOpt();
 
     // If the user requested to use a saved search, look it up.
-    if (exporter.searchOptProvided()) {
-        const grouping = exporter.cliOptions.search.split(':');
-        search_options = await exporter.getSavedOptions(grouping[0], grouping[1]);
+    if (search_param) {
+        if (exporter.searchFileExists()) {
+            const grouping = search_param.split(':');
+            search_options = await exporter.getSavedOptions(grouping[0], grouping[1]);
+        }
+        else {
+            console.error(`Can't find 'search.yml' to load saved search '${search_param}'.`);
+            process.exit(1);
+        }
 
     // If there were no query or search options set, ask the user what they want to do.
-    } else if (!exporter.queryOptProvided()) {
-        const search = await exporter.getUserSearchOption();
+    } else if (!exporter.queryOptProvided() && exporter.searchFileExists()) {
+        const action = await exporter.getUserAction();
 
-        if (search !== "New Search") {
-            const grouping = search.split(':');
+        if (action !== "New Search") {
+            const grouping = action.split(':');
             search_options = await exporter.getSavedOptions(grouping[0], grouping[1])
         }
     }

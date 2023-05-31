@@ -51,8 +51,16 @@ class Exporter {
      * Determine if the user provided a saved search option.
      * @returns {boolean}
      */
-    searchOptProvided() {
-        return (this.cliOptions?.search && this.cliOptions?.search !== '');
+    getSearchOpt() {
+        return this.cliOptions?.search;
+    }
+
+    /**
+     * Check to see if the search.yml file exists.
+     * @returns {boolean}
+     */
+    searchFileExists() {
+        return fs.existsSync('./search.yml');
     }
 
     /**
@@ -109,7 +117,7 @@ class Exporter {
      * Ask the user what type of search to execute.
      * @returns {Promise<*>}
      */
-    async getUserSearchOption() {
+    async getUserAction() {
         const options = await this.getSavedSearches();
 
         // Define the options for the prompt.
