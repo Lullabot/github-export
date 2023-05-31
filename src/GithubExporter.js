@@ -214,16 +214,19 @@ class Exporter {
         let absolutePath = path.resolve(`./exports/${filename}`);
 
         // Write the csv.
-        fs.writeFile(absolutePath, content.join('\n'), {flag: 'a+'}, err => {
+        fs.writeFile(absolutePath, content.join('\n'), {flag: 'w'}, err => {
             if (err) {
                 throw new Error(err);
-            }
-            else {
+            } else {
                 console.log(`\n💾 File saved to ${absolutePath}`)
             }
         });
     };
 
+    /**
+     * Print the results to the console.
+     * @param content
+     */
     printResults(content) {
         // Print the content to the console.
         console.log(content.join('\n'));
@@ -268,12 +271,17 @@ class Exporter {
         return data.join(',');
     };
 
+    /**
+     * Prepare a string for CSV format.
+     * @param string
+     * @returns {*}
+     */
     parseCsvString(string) {
         // Remove line breaks.
-        string = string.replace(/\n/g, '');
+        string.replace(/\n/g, '');
 
-        // Parse commas.
-        string = string.replace(',', '\,');
+        // Escape commas.
+        string = string.replace(/,/g, '\,');
 
         return string;
     }
