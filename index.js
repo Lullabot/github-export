@@ -34,7 +34,10 @@ async function main(config, options, exporter) {
     } else if (!exporter.queryOptProvided() && exporter.searchFileExists()) {
         const action = await exporter.getUserAction();
 
-        if (action !== "New Search") {
+        if (action === "Show Available Fields") {
+            search_options = exporter.setFieldExample();
+        }
+        else if (action !== "New Search") {
             const grouping = action.split(':');
             search_options = await exporter.getSavedOptions(grouping[0], grouping[1])
         }

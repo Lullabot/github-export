@@ -14,6 +14,7 @@ class Exporter {
     cliOptions;
     queryOptions = {};
     opsDef;
+    fieldExample = false;
 
     /**
      * Constructor.
@@ -122,7 +123,7 @@ class Exporter {
         const options = await this.getSavedSearches();
 
         // Define the options for the prompt.
-        const search_groups = ['New Search'];
+        const search_groups = ['New Search', 'Show Available Fields'];
         for (let i in options) {
             for (let j in options[i]) {
                 search_groups.push(`${i}:${j}`);
@@ -134,6 +135,23 @@ class Exporter {
         }]).then(answers => {
             return answers.search;
         });
+    }
+
+    /**
+     * If a user wants to see what fields are available, set params for a special type of report.
+     * @returns {{}}
+     */
+    setFieldExample() {
+        const search_options = {};
+
+        this.fieldExample = true;
+
+        search_options.owner = 'Lullabot';
+        search_options.repo = 'github-export';
+        search_options.fields = 'all';
+        search_options.query = 'label:Example';
+        search_options.file = 'AvailableFields.csv';
+        return search_options;
     }
 
     /**
@@ -194,12 +212,37 @@ class Exporter {
         let content = [];
         fields = fields.split(',');
 
-        // Set headers.
-        content.push(this.setHeaders(fields));
+        // Print all available fields.  Helpful to see what's available.
+        if (fields[0] === 'all') {
+            let allFields = [];
 
-        // Build results.
-        for (let i in results) {
-            content.push(this.parseIssue(results[i], fields));
+            for (let i in results[0]) {
+                if (typeof results[0][i] !== 'object' && !Array.isArray(results[0][i])) {
+                    allFields.push(i);
+                }
+            }
+
+            fields = allFields;
+        }
+
+        // If this is a field example request, just print one result and list the fields vertically.
+        if (this.fieldExample) {
+            let rep_result = results[0];
+
+            content.push('Field Name,Example Value');
+
+            for (let i in fields) {
+                content.push(`${fields[i]},"${rep_result[fields[i]]}"`);
+            }
+        }
+        else {
+            // Set headers.
+            content.push(this.setHeaders(fields));
+
+            // Build results.
+            for (let i in results) {
+                content.push(this.parseIssue(results[i], fields));
+            }
         }
 
         return content;

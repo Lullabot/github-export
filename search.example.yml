@@ -21,3 +21,10 @@ MyStuff:
     query: "is:issue is:open"
     fields: title,html_url
     file: "myactivestuff.csv"
+
+Examples:
+  AllFields:
+    owner: Lullabot
+    repo: github-export
+    query: is:issue is:open label:Example
+    fields: all
