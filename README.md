@@ -1,9 +1,11 @@
 # GitHub Issue Exporter
 
-1. Clone to your local.
-2. Run `npm install`
-3. Copy `config.example.js` to `config.js` and replace the github token with your own [Personal Access Token](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens).
-4. Copy `search.example.yml` to `search.yml` and replace any example saved searches with your own.
+1. [Install node.js](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm).
+2. Clone to your local.
+3. `cd` into the directory.
+4. Run `npm install`
+5. Copy `config.example.js` to `config.js` and replace the github token with your own [Personal Access Token](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens).
+6. (optional) Copy `search.example.yml` to `search.yml` and replace any example saved searches with your own.
 
 ## Saved Searches
 Find yourself repeating the same searches over and over?  Save the parameters in  `search.yml`!
