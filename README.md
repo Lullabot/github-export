@@ -44,3 +44,25 @@ Run `node index.js` without any parameters.  When prompted, select "Show Availab
 ## Limitations
 1. Doesn't pull complex field values (yet), like Users or Labels (See https://github.com/Lullabot/github-export/issues/3)
 2. Doesn't pull data added via GitHub Projects, like custom fields. (See https://github.com/Lullabot/github-export/issues/4)
+
+## Direct API Call
+Call this search directly from another application using the `.search()` method!
+
+```js
+const exporter = new Exporter('Github Personal Access Token');
+
+let issues = [];
+issues = await exporter.search({
+    owner: 'Lullabot',
+    repo: 'github-export',
+    query: 'label:Example',
+    fields: 'title,html_url',       // (optional) Defaults to all fields
+    headerRow: true                 // (optional) Defaults to false
+}).catch(err => {
+    console.error(err.message);
+});
+
+if (issues) {
+    console.log(issues);
+}
+```

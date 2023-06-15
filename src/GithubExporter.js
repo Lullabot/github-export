@@ -20,13 +20,19 @@ class Exporter {
      * Constructor.
      *
      * @param token
+     */
+    constructor(token) {
+        // Instantiate the GitHub API.
+        this.github = new GitHub({token: token});
+    }
+
+    /**
+     * Initialize the Exporter for use with a CLI.
+     *
      * @param options
      * @param program
      */
-    constructor(token, options, program) {
-        // Instantiate the GitHub API.
-        this.github = new GitHub({token: token});
-
+    initCli(options, program) {
         // Store the options definition.
         this.opsDef = options;
 
@@ -47,7 +53,7 @@ class Exporter {
         // Load the CLI options into the program.
         program.parse(program.argv);
         this.cliOptions = program.opts();
-    };
+    }
 
     /**
      * Determine if the user provided a saved search option.
@@ -194,21 +200,65 @@ class Exporter {
      */
     async getIssues(query) {
         // Prepend the repo to the query string.
-        query = `repo:${this.queryOptions.owner}/${this.queryOptions.repo} ${query}`;
+        query = Exporter.buildQuery(this.queryOptions.owner, this.queryOptions.repo, query);
 
         return await this.github.search().forIssues({q: query}).then(results => {
             return results.data;
         });
-    };
+    }
+
+    /**
+     * Build a GitHub search query.
+     *
+     * @param owner
+     * @param repo
+     * @param query
+     * @returns {string}
+     */
+    static buildQuery(owner, repo, query) {
+        return `repo:${owner}/${repo} ${query}`;
+    }
+
+    /**
+     * Direct search API given the minimum necessary params.
+     *
+     * @param params
+     * @returns {Promise<void>}
+     */
+    async search(params) {
+        const defaults = {
+            owner: '',
+            repo: '',
+            query: '',
+            fields: 'all',
+            headerRow: false
+        };
+
+        // Merge defaults with provided params.
+        const search_params = {...defaults, ...params};
+        const query = Exporter.buildQuery(search_params.owner, search_params.repo, search_params.query);
+
+        // Get issues from GitHub.
+        const results = await this.github.search().forIssues({q: query}).then(results => {
+            return results.data;
+        }).catch(err => {
+            let error = new Error('Search failed.  Please check your search parameters.');
+            error.original = err;
+            throw error;
+        });
+
+        return this.parseResults(results, search_params.fields, search_params.headerRow);
+    }
 
     /**
      * Get the required fields from the results.
      *
      * @param results
      * @param fields
+     * @param header_row
      * @returns {*[]}
      */
-    parseResults(results, fields) {
+    parseResults(results, fields, header_row) {
         let content = [];
         fields = fields.split(',');
 
@@ -226,7 +276,7 @@ class Exporter {
         }
 
         // If this is a field example request, just print one result and list the fields vertically.
-        if (this.fieldExample) {
+        if (this.fieldExample === true) {
             let rep_result = results[0];
 
             content.push('Field Name,Example Value');
@@ -237,7 +287,9 @@ class Exporter {
         }
         else {
             // Set headers.
-            content.push(this.setHeaders(fields));
+            if (header_row === true) {
+                content.push(this.setHeaders(fields));
+            }
 
             // Build results.
             for (let i in results) {

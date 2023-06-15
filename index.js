@@ -6,7 +6,8 @@ const options = require('./src/opts');
 const config = require('./config');
 
 // Instantiate the exporter.
-const exporter = new Exporter(config.githubToken, options, program);
+const exporter = new Exporter(config.githubToken);
+exporter.initCli(options, program);
 
 /**
  * Define the app.
