@@ -8,21 +8,33 @@
 6. (optional) Copy `search.example.yml` to `search.yml` and replace any example saved searches with your own.
 
 ## Search For Issues
+
+### Option 1: Use the command prompts
 1. Run `node index.js`
 2. Choose "New Search"
 3. The Owner and Repo are the first two parts of the URL.  For example, in this case `Lullabot` and `github-export` respectively.
 4. For the `query` input, use anything that you would use to search for issues in GitHub.  For example `is:open is:pr`
 5. For `fields`, you can specify any fields you know the machine name for.  If unsure, say `all` to get all fields, or run the app again and choose "Show Available Fields" from the options menu.
 
-## Saved Searches
+### Option 2: Specify directly from the CLI
+
+```bash
+node index.js -o Lullabot -r github-export -q "is:issue is:open" -f "title,html_url" -f issuedump.csv
+```
+
+If you leave any required options empty, the app will prompt you for them.
+
+*Run with the `--help` flag to see all available options.*
+
+### Option 3: Define a saved search
 Find yourself repeating the same searches over and over?  Save the parameters in  `search.yml`!
 
 ```yaml
 # Example saved search.  Export all issues from my repo and save it into the 'exports' folder as 'allmystuff.csv'.
 MyStuff:
     all:
-        owner: MyName
-        repo: MyCoolRepo
+        owner: Lullabot
+        repo: github-export
         query: "is:issue"
         fields: title,html_url
         file: "allmystuff.csv"  # optional
