@@ -300,6 +300,14 @@ class Exporter {
         return content;
     }
 
+    parseFields(fields) {
+        for (let i in fields) {
+            if (fields[i].indexOf(':') !== 0) {
+                // Split the field to
+            }
+        }
+    }
+
     /**
      * Return the path to a desired export file.
      * @returns {((successCallback: FileCallback, errorCallback?: ErrorCallback) => void) | undefined}
@@ -363,12 +371,17 @@ class Exporter {
         let data = [];
 
         for (let i in fields) {
-            if (issue.hasOwnProperty(fields[i])) {
-                let _data = this.parseCsvString(issue[fields[i]].toString());
-
-                data.push(_data);
+            if (fields[i].indexOf(':') !== 0) {
+                // Split the reference to extract subvalues.
+                let complex_field = fields[i].split(':');
             } else {
-                data.push('');
+                if (issue.hasOwnProperty(fields[i])) {
+                    let _data = this.parseCsvString(issue[fields[i]].toString());
+
+                    data.push(_data);
+                } else {
+                    data.push('');
+                }
             }
         }
 
