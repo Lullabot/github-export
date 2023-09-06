@@ -7,10 +7,17 @@
 5. Copy `config.example.js` to `config.js` and replace the github token with your own [Personal Access Token](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens).
 6. (optional) Copy `search.example.yml` to `search.yml` and replace any example saved searches with your own.
 
+## Search For Issues
+1. Run `node index.js`
+2. Choose "New Search"
+3. The Owner and Repo are the first two parts of the URL.  For example, in this case `Lullabot` and `github-export` respectively.
+4. For the `query` input, use anything that you would use to search for issues in GitHub.  For example `is:open is:pr`
+5. For `fields`, you can specify any fields you know the machine name for.  If unsure, say `all` to get all fields, or run the app again and choose "Show Available Fields" from the options menu.
+
 ## Saved Searches
 Find yourself repeating the same searches over and over?  Save the parameters in  `search.yml`!
 
-```yml
+```yaml
 # Example saved search.  Export all issues from my repo and save it into the 'exports' folder as 'allmystuff.csv'.
 MyStuff:
     all:
@@ -21,11 +28,18 @@ MyStuff:
         file: "allmystuff.csv"  # optional
 ```
 
-then, run this command:
+then, perform the search by running this command:
+
 ```bash
-node . -s MyStuff:all
+node index.js -s MyStuff:all
 ```
 If you forget any required parameters, the app will ask you for them.
+
+You can also **override any saved search** settings using the CLI flags.
+
+```bash
+node index.js -s MyStuff:all -q "is:issue is:open"
+```
 
 ## What fields are available?
 ### Option 1: Set "fields" to 'all'
@@ -48,10 +62,10 @@ Run `node index.js` without any parameters.  When prompted, select "Show Availab
 2. Doesn't pull data added via GitHub Projects, like custom fields. (See https://github.com/Lullabot/github-export/issues/4)
 
 ## Direct API Call
-Call this search directly from another application using the `.search()` method!
+Want a quick and easy way to get a dump of GitHub issues into your application?  Call this search directly using the `.search()` method!
 
 ```js
-const exporter = new Exporter('Github Personal Access Token');
+const exporter = new Exporter('MyGitHubPersonlAccessToken');
 
 let issues = [];
 issues = await exporter.search({
